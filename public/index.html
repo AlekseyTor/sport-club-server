@@ -1,0 +1,1118 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СпортКлуб - Система учета клиентов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: #667eea;
+        }
+
+        .auth-status {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .auth-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-buttons button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .btn-view {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f56565;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-header h3 {
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .toast {
+            background: white;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast-success { border-left: 4px solid #48bb78; }
+        .toast-error { border-left: 4px solid #f56565; }
+        .toast-info { border-left: 4px solid #4299e1; }
+
+
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>СпортКлуб</h1>
+            <p>Система учета клиентов</p>
+            <div id="authStatus" class="auth-status"></div>
+        </div>
+
+        <!-- Формы авторизации -->
+        <div id="authSection" class="auth-section">
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Вход</button>
+                <button class="tab-btn" onclick="switchTab('register')">Регистрация</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <h2>Вход в систему</h2>
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="loginUsername" placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="admin123">
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </form>
+
+            <form id="registerForm" class="auth-form">
+                <h2>Регистрация</h2>
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="registerUsername">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="registerPassword">
+                </div>
+                <div class="form-group">
+                    <label>Подтверждение пароля</label>
+                    <input type="password" id="registerConfirmPassword">
+                </div>
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            </form>
+        </div>
+
+        
+        <div id="mainContent" style="display: none;">
+            <!-- Статистика -->
+            <div class="stats-grid" id="statisticsGrid"></div>
+
+            <!-- Форма добавления клиента -->
+            <div class="card">
+                <h2>Добавить клиента</h2>
+                <form id="clientForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ФИО *</label>
+                            <input type="text" id="fullName" required placeholder="Иванов Иван Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон *</label>
+                            <input type="text" id="phone" required placeholder="+7 (999) 123-45-67">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="client@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Дата рождения</label>
+                            <input type="date" id="birthDate">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Тип абонемента</label>
+                            <select id="membershipType">
+                                <option value="monthly">Месячный (5 000 ₽)</option>
+                                <option value="quarterly">Квартальный (13 500 ₽)</option>
+                                <option value="yearly">Годовой (48 000 ₽)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата начала</label>
+                            <input type="date" id="startDate">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить клиента</button>
+                </form>
+            </div>
+
+            <!-- Поиск и список клиентов -->
+            <div class="card">
+                <h2>Список клиентов</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Поиск по имени или телефону...">
+                    <button class="btn btn-primary" onclick="searchClients()">Найти</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="clientsTable">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Телефон</th>
+                                <th>Email</th>
+                                <th>Абонемент</th>
+                                <th>Посещений</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно деталей клиента -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Информация о клиенте</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="clientDetails"></div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="addPaymentBtn">Добавить платеж</button>
+                <button class="btn btn-primary" id="addVisitBtn">Отметить посещение</button>
+                <button class="btn btn-danger" id="deleteFromModalBtn">Удалить клиента</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Подтверждение удаления</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">×</button>
+            </div>
+            <p>Вы уверены, что хотите удалить этого клиента?</p>
+            <p style="color: #f56565; font-size: 14px; margin-top: 10px;">Это действие невозможно отменить.</p>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Отмена</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // ============================================
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ============================================
+        let currentUser = null;
+        let currentClientId = null;
+        let deleteTargetId = null;
+
+        // Цены абонементов
+        const MEMBERSHIP_PRICES = {
+            monthly: 5000,
+            quarterly: 13500,
+            yearly: 48000
+        };
+
+       
+        // ИНИЦИАЛИЗАЦИЯ
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            setupEventListeners();
+            
+            // Устанавливаем дату начала по умолчанию (сегодня)
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+        });
+
+        function setupEventListeners() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('clientForm').addEventListener('submit', handleClientSubmit);
+            
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') searchClients();
+                });
+            }
+        }
+
+        
+        // АУТЕНТИФИКАЦИЯ
+        
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/current-user');
+                const data = await response.json();
+                
+                if (response.ok && data.id) {
+                    currentUser = data;
+                    showMainContent();
+                    await loadAllData();
+                } else {
+                    showAuthForms();
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                showAuthForms();
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentUser = data.user;
+                    showNotification('Вход выполнен успешно', 'success');
+                    showMainContent();
+                    await loadAllData();
+                } else {
+                    showNotification(data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка соединения', 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirmPassword').value;
+            
+            if (password !== confirm) {
+                showNotification('Пароли не совпадают', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Регистрация успешна! Теперь войдите.', 'success');
+                    switchTab('login');
+                } else {
+                    showNotification(data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка соединения', 'error');
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            currentUser = null;
+            showAuthForms();
+            showNotification('Вы вышли из системы', 'info');
+        }
+
+        
+        // ЗАГРУЗКА ДАННЫХ
+        
+        async function loadAllData() {
+            await loadStatistics();
+            await loadClients();
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/statistics');
+                const stats = await response.json();
+                
+                const html = `
+                    <div class="stat-card">
+                        <h3>Всего клиентов</h3>
+                        <div class="stat-number">${stats.clients?.total_clients || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Активных</h3>
+                        <div class="stat-number">${stats.clients?.active_clients || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Посещений сегодня</h3>
+                        <div class="stat-number">${stats.visits_today || 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Доход за месяц</h3>
+                        <div class="stat-number">${(stats.monthly_income || 0).toLocaleString()} ₽</div>
+                    </div>
+                `;
+                
+                document.getElementById('statisticsGrid').innerHTML = html;
+            } catch (error) {
+                console.error('Load statistics error:', error);
+            }
+        }
+
+        async function loadClients() {
+            try {
+                const response = await fetch('/api/clients');
+                const clients = await response.json();
+                
+                const tbody = document.getElementById('clientsTableBody');
+                
+                if (!clients || clients.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет клиентов</td></tr>';
+                    return;
+                }
+                
+                const membershipNames = { 
+                    monthly: 'Месячный', 
+                    quarterly: 'Квартальный', 
+                    yearly: 'Годовой' 
+                };
+                
+                tbody.innerHTML = clients.map(client => `
+                    <tr>
+                        <td><strong>${escapeHtml(client.full_name)}</strong></td>
+                        <td>${escapeHtml(client.phone)}</td>
+                        <td>${escapeHtml(client.email || '—')}</td>
+                        <td>${membershipNames[client.membership_type] || client.membership_type}</td>
+                        <td>${client.visits_count || 0}</td>
+                        <td class="action-buttons">
+                            <button class="btn-view" onclick="viewClient(${client.id})">Просмотр</button>
+                            <button class="btn-edit" onclick="editClient(${client.id})">Изменить</button>
+                            <button class="btn-delete" onclick="showDeleteModal(${client.id})">Удалить</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Load clients error:', error);
+                showNotification('Ошибка загрузки клиентов', 'error');
+            }
+        }
+
+        
+        // РАБОТА С КЛИЕНТАМИ
+        
+        async function handleClientSubmit(e) {
+            e.preventDefault();
+            
+            const membershipType = document.getElementById('membershipType').value;
+            const price = MEMBERSHIP_PRICES[membershipType];
+            
+            const clientData = {
+                full_name: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                birth_date: document.getElementById('birthDate').value,
+                membership_type: membershipType,
+                start_date: document.getElementById('startDate').value,
+                price: price
+            };
+            
+            if (!clientData.full_name || !clientData.phone) {
+                showNotification('Заполните ФИО и телефон', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/clients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(clientData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Клиент добавлен', 'success');
+                    document.getElementById('clientForm').reset();
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('startDate').value = today;
+                    await loadAllData();
+                } else {
+                    showNotification(data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка сохранения', 'error');
+            }
+        }
+
+        async function viewClient(id) {
+            currentClientId = id;
+            
+            try {
+                const clientRes = await fetch(`/api/clients/${id}`);
+                const client = await clientRes.json();
+                
+                const paymentsRes = await fetch(`/api/clients/${id}/payments`);
+                const payments = await paymentsRes.json();
+                
+                const visitsRes = await fetch(`/api/clients/${id}/visits`);
+                const visits = await visitsRes.json();
+                
+                const membershipNames = { monthly: 'Месячный', quarterly: 'Квартальный', yearly: 'Годовой' };
+                const membershipPrices = { monthly: '5 000 ₽', quarterly: '13 500 ₽', yearly: '48 000 ₽' };
+                
+                const html = `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Основная информация</h4>
+                        <p><strong>ФИО:</strong> ${escapeHtml(client.full_name)}</p>
+                        <p><strong>Телефон:</strong> ${escapeHtml(client.phone)}</p>
+                        <p><strong>Email:</strong> ${escapeHtml(client.email || '—')}</p>
+                        <p><strong>Дата рождения:</strong> ${client.birth_date || '—'}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Абонемент</h4>
+                        <p><strong>Тип:</strong> ${membershipNames[client.membership_type] || client.membership_type}</p>
+                        <p><strong>Стоимость:</strong> ${membershipPrices[client.membership_type] || (client.price || 0).toLocaleString() + ' ₽'}</p>
+                        <p><strong>Дата начала:</strong> ${client.start_date || '—'}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Статистика</h4>
+                        <p><strong>Всего посещений:</strong> ${client.stats?.total_visits || 0}</p>
+                        <p><strong>Посещений в этом месяце:</strong> ${client.stats?.visits_this_month || 0}</p>
+                        <p><strong>Всего оплачено:</strong> ${(client.stats?.total_paid || 0).toLocaleString()} ₽</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">История платежей</h4>
+                        ${payments.length > 0 ? `
+                            <table style="width:100%; font-size:14px;">
+                                <thead>
+                                    <tr style="background:#f0f0f0;">
+                                        <th style="padding:8px;">Дата</th>
+                                        <th style="padding:8px;">Сумма</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${payments.map(p => `
+                                        <tr>
+                                            <td style="padding:8px;">${p.payment_date || '—'}</td>
+                                            <td style="padding:8px;">${p.amount.toLocaleString()} ₽</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        ` : '<p style="color:#718096;">Нет платежей</p>'}
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">История посещений</h4>
+                        ${visits.length > 0 ? `
+                            <table style="width:100%; font-size:14px;">
+                                <thead>
+                                    <tr style="background:#f0f0f0;">
+                                        <th style="padding:8px;">Дата</th>
+                                        <th style="padding:8px;">Время</th>
+                                        <th style="padding:8px;">Отметил</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${visits.map(v => `
+                                        <tr>
+                                            <td style="padding:8px;">${v.visit_date || '—'}</td>
+                                            <td style="padding:8px;">${v.check_in_time || '—'}</td>
+                                            <td style="padding:8px;">${escapeHtml(v.created_by_name || '—')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        ` : '<p style="color:#718096;">Нет посещений</p>'}
+                    </div>
+                `;
+                
+                document.getElementById('clientDetails').innerHTML = html;
+                document.getElementById('modalTitle').innerText = client.full_name;
+                document.getElementById('clientModal').style.display = 'flex';
+                
+                document.getElementById('addPaymentBtn').onclick = () => addPayment(id);
+                document.getElementById('addVisitBtn').onclick = () => addVisit(id);
+                document.getElementById('deleteFromModalBtn').onclick = () => {
+                    closeModal();
+                    showDeleteModal(id);
+                };
+                
+            } catch (error) {
+                console.error('View client error:', error);
+                showNotification('Ошибка загрузки деталей', 'error');
+            }
+        }
+
+        async function editClient(id) {
+            try {
+                const response = await fetch(`/api/clients/${id}`);
+                const client = await response.json();
+                
+                document.getElementById('fullName').value = client.full_name;
+                document.getElementById('phone').value = client.phone;
+                document.getElementById('email').value = client.email || '';
+                document.getElementById('birthDate').value = client.birth_date || '';
+                document.getElementById('membershipType').value = client.membership_type;
+                document.getElementById('startDate').value = client.start_date || '';
+                
+                document.getElementById('clientForm').scrollIntoView({ behavior: 'smooth' });
+                showNotification('Данные загружены. Отредактируйте и нажмите Сохранить', 'info');
+            } catch (error) {
+                showNotification('Ошибка загрузки', 'error');
+            }
+        }
+
+        
+        // ПЛАТЕЖИ И ПОСЕЩЕНИЯ
+        
+        async function addPayment(clientId) {
+            const amount = prompt('Введите сумму платежа (в рублях):');
+            if (!amount) return;
+            
+            const numAmount = parseFloat(amount);
+            if (isNaN(numAmount) || numAmount <= 0) {
+                showNotification('Введите корректную сумму', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/payments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        amount: numAmount,
+                        payment_method: 'cash'
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification(`Платеж на сумму ${numAmount.toLocaleString()} ₽ добавлен`, 'success');
+                    viewClient(clientId);
+                    loadStatistics();
+                } else {
+                    const data = await response.json();
+                    showNotification(data.error || 'Ошибка', 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка добавления платежа', 'error');
+            }
+        }
+
+        async function addVisit(clientId) {
+            try {
+                const response = await fetch('/api/visits', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ client_id: clientId })
+                });
+                
+                if (response.ok) {
+                    showNotification('Посещение отмечено!', 'success');
+                    viewClient(clientId);
+                    loadStatistics();
+                    loadClients();
+                } else {
+                    const data = await response.json();
+                    showNotification(data.error || 'Ошибка', 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка отметки посещения', 'error');
+            }
+        }
+
+        
+        // УДАЛЕНИЕ КЛИЕНТА
+        
+        function showDeleteModal(id) {
+            deleteTargetId = id;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteTargetId = null;
+        }
+
+        async function confirmDelete() {
+            if (!deleteTargetId) return;
+            
+            try {
+                const response = await fetch(`/api/clients/${deleteTargetId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showNotification('Клиент удален', 'success');
+                    await loadAllData();
+                    closeModal();
+                } else {
+                    const data = await response.json();
+                    showNotification(data.error || 'Ошибка', 'error');
+                }
+            } catch (error) {
+                showNotification('Ошибка удаления', 'error');
+            } finally {
+                closeDeleteModal();
+            }
+        }
+
+        
+        // ПОИСК
+       
+        async function searchClients() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                loadClients();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/search/${encodeURIComponent(query)}`);
+                const clients = await response.json();
+                
+                const tbody = document.getElementById('clientsTableBody');
+                const membershipNames = { monthly: 'Месячный', quarterly: 'Квартальный', yearly: 'Годовой' };
+                
+                if (clients.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Ничего не найдено</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = clients.map(client => `
+                    <tr>
+                        <td><strong>${escapeHtml(client.full_name)}</strong></td>
+                        <td>${escapeHtml(client.phone)}</td>
+                        <td>${escapeHtml(client.email || '—')}</td>
+                        <td>${membershipNames[client.membership_type] || client.membership_type}</td>
+                        <td>${client.visits_count || 0}</td>
+                        <td class="action-buttons">
+                            <button class="btn-view" onclick="viewClient(${client.id})">Просмотр</button>
+                            <button class="btn-edit" onclick="editClient(${client.id})">Изменить</button>
+                            <button class="btn-delete" onclick="showDeleteModal(${client.id})">Удалить</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Search error:', error);
+                showNotification('Ошибка поиска', 'error');
+            }
+        }
+
+        
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        
+        function showMainContent() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            
+            document.getElementById('authStatus').innerHTML = `
+                <div class="user-info">
+                    <span>${escapeHtml(currentUser.username)} (${currentUser.role === 'admin' ? 'Администратор' : 'Пользователь'})</span>
+                    <button class="logout-btn" onclick="logout()">Выйти</button>
+                </div>
+            `;
+        }
+
+        function showAuthForms() {
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('authStatus').innerHTML = '';
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('clientModal').style.display = 'none';
+            currentClientId = null;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span><span>${escapeHtml(message)}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) toast.remove();
+            }, 3000);
+        }
+
+        // Глобальные функции для HTML
+        window.switchTab = switchTab;
+        window.viewClient = viewClient;
+        window.editClient = editClient;
+        window.showDeleteModal = showDeleteModal;
+        window.closeDeleteModal = closeDeleteModal;
+        window.confirmDelete = confirmDelete;
+        window.closeModal = closeModal;
+        window.searchClients = searchClients;
+        window.addPayment = addPayment;
+        window.addVisit = addVisit;
+        window.logout = logout;
+        
+        document.getElementById('confirmDeleteBtn').onclick = confirmDelete;
+    </script>
+</body>
+</html>
