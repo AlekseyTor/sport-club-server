@@ -1,16 +1,16 @@
 Добрый день. Чтоб запустить сервер нужно сделать в cmd следующие:
 
-1. Клонировать репозиторий
+1. Скачйте репозиторий
 ```
-git clone https://github.comAlekseyTor/sport-club-server.git
-cd sport-club-server
+2. Распакуйте файл
 ```
-
-2. Установить зависимости
+3. Откройте терминал с путём C:\Users\Student\Desktop\sport-club-server-main\sport-club-server-main
+```
+4. Установить зависимости
 ```
 npm install
 ```
-4. Запустить сервер
+5. Запустить сервер
 ```
 npm start
 ```
